@@ -21,7 +21,8 @@
     "paths": {
       "@/*": ["./src/*"],
       "contentlayer/generated": ["./.contentlayer/generated"]
-    }
+    },
+    "target": "ES2015"  // Added target field to ensure ECMAScript 2015 features (private fields, etc.)
   },
   "include": [
     "next-env.d.ts",
