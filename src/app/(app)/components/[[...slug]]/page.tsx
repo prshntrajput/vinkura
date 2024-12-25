@@ -12,13 +12,14 @@ import { DocPager } from '@/components/pager';
 import { Metadata } from 'next';
 import { siteConfig } from '@/config/site';
 import { siteUrl } from '@/utils/utils';
-import { Loader } from '@/components/Loader';
 
 interface AgentsPageProps {
   params: {
     slug: string[];
   };
 }
+
+// Fetch document data based on the route parameters
 async function getDocFromParams({ params }: AgentsPageProps) {
   const slug = params.slug?.join('/') || '';
   const doc = allDocuments.find((doc) => doc.slugAsParams === slug);
@@ -29,6 +30,8 @@ async function getDocFromParams({ params }: AgentsPageProps) {
 
   return doc;
 }
+
+// Metadata generation for SEO
 export async function generateMetadata({
   params,
 }: AgentsPageProps): Promise<Metadata> {
@@ -36,7 +39,7 @@ export async function generateMetadata({
   if (!doc) {
     return {};
   }
-  const { title } = doc;
+
   const ogImage = `${siteUrl}api/og?title=${doc.title}`;
   return {
     title: `${doc.title} | AgentGenesis`,
@@ -64,22 +67,22 @@ export async function generateMetadata({
           url: ogImage,
           width: 1200,
           height: 630,
-          alt: title,
+          alt: doc.title,
         },
       ],
     },
   };
 }
 
-export async function generateStaticParams(): Promise<
-  AgentsPageProps['params'][]
-> {
+// Generate static parameters for dynamic routing
+export async function generateStaticParams(): Promise<AgentsPageProps['params'][]> {
   return allDocuments.map((doc) => ({
     slug: doc.slugAsParams.split('/'),
   }));
 }
 
-export async function Agents({ params }: AgentsPageProps) {
+// Main component
+const Agents = async ({ params }: AgentsPageProps) => {
   const doc = await getDocFromParams({ params });
 
   if (!doc) {
@@ -89,10 +92,7 @@ export async function Agents({ params }: AgentsPageProps) {
   const toc = await getTableOfContents(doc.body.raw);
 
   return (
-    <>
-     <Loader />
-    
-    <main className="relative py-6 lg:gap-10 lg:py-8 xl:grid xl:grid-cols-[1fr_300px] mt-14 ">
+    <main className="relative py-6 lg:gap-10 lg:py-8 xl:grid xl:grid-cols-[1fr_300px] mt-14">
       <div className="mx-auto w-full min-w-0">
         <div className="mb-4 flex items-center space-x-1 text-sm text-muted-foreground">
           <div className="overflow-hidden text-ellipsis whitespace-nowrap">
@@ -117,20 +117,19 @@ export async function Agents({ params }: AgentsPageProps) {
         <DocPager doc={doc} />
       </div>
       {doc.toc && (
-        <div className="hidden text-sm xl:block">
+        <aside className="hidden text-sm xl:block">
           <div className="sticky top-16 -mt-10 pt-4">
             <ScrollArea className="pb-10">
-              <div className="sticky top-16 -mt-10 h-[calc(100vh-3.5rem)] py-12 flex flex-col gap-4">
+              <div className="h-[calc(100vh-3.5rem)] py-12 flex flex-col gap-4">
                 <DashboardTableOfContents toc={toc} />
                 <Contribute doc={doc} />
               </div>
             </ScrollArea>
           </div>
-        </div>
+        </aside>
       )}
     </main>
-    </>
   );
-}
+};
 
 export default Agents;
