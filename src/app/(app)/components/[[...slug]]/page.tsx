@@ -20,6 +20,7 @@ interface AgentsPageProps {
   };
 }
 
+// Utility function to get document based on the params
 async function getDocFromParams({ params }: AgentsPageProps) {
   const slug = params.slug?.join('/') || '';
   const doc = allDocuments.find((doc) => doc.slugAsParams === slug);
@@ -27,10 +28,10 @@ async function getDocFromParams({ params }: AgentsPageProps) {
   if (!doc) {
     return null;
   }
-
   return doc;
 }
 
+// Metadata generation for the page
 export async function generateMetadata({
   params,
 }: AgentsPageProps): Promise<Metadata> {
@@ -73,6 +74,7 @@ export async function generateMetadata({
   };
 }
 
+// Static parameters generation for dynamic routes
 export async function generateStaticParams(): Promise<
   AgentsPageProps['params'][]
 > {
@@ -81,7 +83,8 @@ export async function generateStaticParams(): Promise<
   }));
 }
 
-export default async function AgentsPage({ params }: AgentsPageProps) {
+// Page component
+const AgentsPage = async ({ params }: AgentsPageProps) => {
   const doc = await getDocFromParams({ params });
 
   if (!doc) {
@@ -132,4 +135,7 @@ export default async function AgentsPage({ params }: AgentsPageProps) {
       </main>
     </>
   );
-}
+};
+
+// Exporting the page component as default
+export default AgentsPage;
