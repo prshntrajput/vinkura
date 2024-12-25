@@ -17,6 +17,13 @@ const predefinedAnswers: Record<string, string> = {
   "Who made you?": "I was developed by the team at this company using advanced AI technology.",
 }
 
+// Define the Message type here
+type Message = {
+  id: string;
+  role: 'user' | 'assistant';  // Correctly restricts role to 'user' or 'assistant'
+  content: string;
+}
+
 export default function Chatbot() {
   const [isOpen, setIsOpen] = useState(false)
   const { messages, input, handleInputChange, handleSubmit, setInput } = useChat()
