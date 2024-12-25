@@ -1,0 +1,233 @@
+---
+title: Cohere Reranker
+description: Supercharge your RAG applications with Cohere's advanced reranking API. Reorder and refine document relevance effortlessly.
+---
+
+<Tabs defaultValue="preview">
+
+<TabsList>
+  <TabsTrigger value="preview">Preview</TabsTrigger>
+  <TabsTrigger value="code">Code</TabsTrigger>
+</TabsList>
+
+<TabsContent value="preview">
+  <ComponentPreviewTemp>
+    <ReRankerDemo />
+  </ComponentPreviewTemp>
+</TabsContent>
+
+<TabsContent value="code">
+
+<CodeBlockWrapper>
+
+```tsx showLineNumbers {15-27}
+import { CohereReranking } from '@/utils/rerank';
+
+const docs = [
+  'Carson City is the capital city of the American state of Nevada.',
+
+  'The Commonwealth of the Northern Mariana Islands is a group of islands in the Pacific Ocean. Its capital is Saipan.',
+
+  'Capitalization or capitalisation in English grammar is the use of a capital letter at the start of a word. English usage varies from capitalization in other languages.',
+
+  'Washington, D.C. (also known as simply Washington or D.C., and officially as the District of Columbia) is the capital of the United States. It is a federal district.',
+
+  'Capital punishment (the death penalty) has existed in the United States since beforethe United States was a country. As of 2017, capital punishment is legal in 30 of the 50 states.',
+];
+
+const cohereRerank = new CohereReranking({
+  apiKey: process.env.COHERE_API_KEY as string,
+  model: 'rerank-english-v3.0',
+  topN: 4,
+  maxChunksPerDoc: 10,
+});
+const rankedDocs = await cohereRerank.rankDocuments(
+  docs,
+  'What is the capital of the United States?',
+  {
+    returnDocuments: true,
+  },
+);
+console.log(rankedDocs);
+```
+
+</CodeBlockWrapper>
+
+</TabsContent>
+
+</Tabs>
+
+## Installation
+
+<Steps>
+
+<Step>Install peer dependencies:</Step>
+
+```bash
+npm i -s cohere-ai
+```
+
+<Step>Add Environment Variables</Step>
+
+```tsx title=".env" showLineNumbers {}
+COHERE_API_KEY = "YOUR_SAMPLE_API_KEY";
+```
+
+<Step>Copy the code</Step>
+
+Add the following code to your `utils/reranker.ts` file:
+
+<CodeBlockWrapper>
+```tsx title="reranker.ts" showLineNumbers {}
+import { CohereClient } from "cohere-ai";
+
+interface DocumentInterface<
+  Result extends Record<string, any> = Record<string, any>
+> {
+  content: string;
+  score: Result;
+  id?: string; // Optional identifier for the document
+}
+
+interface CohereRerankProps {
+  apiKey: string; // The API key to use
+  model?: string; // The name of the model to use (default: "rerank-english-v3.0")
+  topN?: number; // How many documents to return (default: document length)
+  maxChunksPerDoc?: number; // The maximum number of chunks per document (default: 10)
+}
+
+export class CohereReranking {
+  private model: string;
+  private topN?: number;
+  private client: CohereClient;
+  private maxChunksPerDoc: number;
+
+  constructor(props: CohereRerankProps) {
+    const {
+      apiKey,
+      model = "rerank-english-v3.0",
+      topN,
+      maxChunksPerDoc = 10,
+    } = props;
+
+    if (!apiKey || apiKey.length === 0) {
+      throw new Error("No API key provided for Cohere-Rerank.");
+    }
+
+    this.client = new CohereClient({ token: apiKey });
+    this.model = model;
+    this.topN = topN;
+    this.maxChunksPerDoc = maxChunksPerDoc;
+  }
+
+  async rankDocuments(
+    documents: string[],
+    query: string,
+    options?: { returnDocuments: boolean }
+  ): Promise<
+    Array<DocumentInterface> | Array<{ index: number; relevanceScore: number }>
+  > {
+    const { results } = await this.client.rerank({
+      model: this.model,
+      query,
+      documents,
+      topN: this.topN ?? documents.length,
+      maxChunksPerDoc: this.maxChunksPerDoc,
+    });
+
+    if (options?.returnDocuments) {
+      return results.map((result) => ({
+        content: documents[result.index],
+        score: { relevanceScore: result.relevanceScore },
+      }));
+    } else {
+      return results.map((result) => ({
+        index: result.index,
+        relevanceScore: result.relevanceScore,
+      }));
+    }
+  }
+}
+
+```
+
+</CodeBlockWrapper>
+</Steps>
+
+## Usage
+
+
+```tsx showLineNumbers {17-25}
+import {CohereReranking} from "@/utils/rerank";
+
+const docs = [
+
+      'Carson City is the capital city of the American state of Nevada.',
+
+      'The Commonwealth of the Northern Mariana Islands is a group of islands in the Pacific Ocean. Its capital is Saipan.',
+
+      'Capitalization or capitalisation in English grammar is the use of a capital letter at the start of a word. English usage varies from capitalization in other languages.',
+
+      'Washington, D.C. (also known as simply Washington or D.C., and officially as the District of Columbia) is the capital of the United States. It is a federal district.',
+
+      'Capital punishment (the death penalty) has existed in the United States since beforethe United States was a country. As of 2017, capital punishment is legal in 30 of the 50 states.',
+
+    ],
+
+  const cohereRerank = new CohereReranking({
+    apiKey: process.env.COHERE_API_KEY as string,
+    model: "rerank-english-v3.0",
+    topN: 4,
+    maxChunksPerDoc: 10
+  });
+  const rankedDocs = await cohereRerank.rankDocuments(docs, 'What is the capital of the United States?', {
+    returnDocuments: true,
+  });
+  console.log(rankedDocs);
+
+
+/**[
+  {
+    content: 'Washington, D.C. (also known as simply Washington or D.C., and officially as the District of Columbia) is the capital of the United States. It is a federal district.',
+    score: { relevanceScore: 0.999071 }
+  },
+  {
+    content: 'Capital punishment (the death penalty) has existed in the United States since beforethe United States was a country. As of 2017, capital punishment is legal in 30 of the 50 states.',
+    score: { relevanceScore: 0.7867867 }
+  },
+  {
+    content: 'Carson City is the capital city of the American state of Nevada.',
+    score: { relevanceScore: 0.32713068 }
+  },
+  {
+    content: 'The Commonwealth of the Northern Mariana Islands is a group of islands in the Pacific Ocean. Its capital is Saipan.',
+    score: { relevanceScore: 0.014899643 }
+  }
+]
+**/
+```
+## Props
+
+### CohereReranking
+
+| Prop              | Type             | Description                                                 | Default                |
+| ----------------- | ---------------- | ----------------------------------------------------------- | ---------------------- |
+| apiKey            | string           | The api key of cohere.                               | ""                     |
+| model             | string(optional) | The model name of cohere reranker.                           | "rerank-english-v3.0"   |
+| topN              | number(optional) | The number of documents to return in results.                 | Length of document     |
+| maxChunksPerDoc   | number(optional) | The maximum number of chunks to produce internally from a document. | 10                    |
+
+### rankDocuments
+
+| Prop              | Type            | Description                               |
+| ----------------- | --------------- | ----------------------------------------- |
+| documents         | string[]        | The list of documents to be reranked.     |
+| query             | string          | The query of the user.                    |
+| returnDocuments   | boolean(optional) | If false, returns results without the doc text. |
+
+
+
+## Credits
+
+This component is built on top of [Cohere Rerank](https://docs.cohere.com/reference/rerank)
+

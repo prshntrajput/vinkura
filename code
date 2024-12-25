@@ -1,0 +1,58 @@
+{/* Feature Section 2 */}
+<div className="w-full py-20 lg:py-40 bg-[url('/path/to/1.png')] bg-cover bg-center">
+  <div className="container mx-auto">
+    <div className="flex flex-col gap-10">
+      <div className="flex gap-4 flex-col items-start">
+        <div>
+          <Badge></Badge>
+        </div>
+        <div className="flex gap-2 flex-col">
+          <h2 className="text-3xl md:text-5xl tracking-tighter max-w-xl font-regular text-left">
+            What Vinkura Does?
+          </h2>
+          <p className="text-lg max-w-xl lg:max-w-lg leading-relaxed tracking-tight text-muted-foreground text-left">
+            At Vinkura AI, we’re dedicated to making a difference in education, technology, and the advancement of artificial intelligence while giving back to the community.
+          </p>
+        </div>
+      </div>
+      
+      {/* Cards Section with Backgrounds */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+  
+    {/* Vinkura for Technology */}
+  <div className="bg-[url('/TECH.png')] bg-cover bg-center rounded-md aspect-square p-6 flex flex-col justify-between">
+    <Earth className="w-8 h-8 stroke-1" />
+    <div className="flex flex-col">
+      <h3 className="text-xl-white tracking-tight">Vinkura for Technology</h3>
+      <p className="text-white max-w-xs text-base">
+        Our technology solutions serve diverse clients like the Uttar Pradesh Police and Mahatma Jyotiba Phule Rohilkhand University, helping them innovate and streamline their processes.
+      </p>
+    </div>
+  </div>
+  
+  {/* Vinkura for AI */}
+  <div className="bg-[url('/AI.png')] bg-cover bg-center rounded-md aspect-square p-6 flex flex-col justify-between">
+    <Cat className="w-8 h-8 stroke-1" />
+    <div className="flex flex-col">
+      <h3 className="text-xl tracking-tight">Vinkura for AI</h3>
+      <p className="text-white max-w-xs text-base">
+        We design state-of-the-art AI models, including the Kuno Series, localized LLMs like Maitreyi, and AI-driven labs powered by Made in India SBCs.
+      </p>
+    </div>
+  </div>
+  
+  {/* Vinkura for Non-Profit Education */}
+  <div className="bg-[url('/NGO.png')] bg-cover bg-center rounded-md h-full lg:col-span-2 p-6 aspect-square lg:aspect-auto flex flex-col justify-between">
+    <Heart className="w-8 h-8 stroke-1" />
+    <div className="flex flex-col">
+      <h3 className="text-xl tracking-tight">Vinkura for Non-Profit Education</h3>
+      <p className="text-white max-w-xs text-base">
+        We organize free hackathons and educational programs, ensuring children have access to quality learning resources and opportunities to grow.
+      </p>
+    </div>
+  </div>
+
+</div>
+</div>
+</div>
+</div>
