@@ -3,7 +3,7 @@
 import * as React from 'react';
 
 import { cn } from '@/lib/utils';
-import { CopyButton, CopyWithClassNames } from '@/components/copy-button';
+import { CopyButton } from '@/components/copy-button';  // Remove CopyWithClassNames import
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 interface ComponentExampleProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -18,7 +18,6 @@ export function ComponentExample({
   className,
   extractedClassNames,
   align = 'center',
-
   ...props
 }: ComponentExampleProps) {
   const [Example, Code, ...Children] = React.Children.toArray(
@@ -58,9 +57,8 @@ export function ComponentExample({
             </TabsTrigger>
           </TabsList>
           {extractedClassNames ? (
-            <CopyWithClassNames
+            <CopyButton
               value={codeString}
-              classNames={extractedClassNames}
               className="absolute right-4 top-20"
             />
           ) : (
