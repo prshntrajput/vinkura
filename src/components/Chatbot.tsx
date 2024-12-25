@@ -25,8 +25,20 @@ export default function Chatbot() {
 
   const handleQuestionSelect = (question: string) => {
     if (predefinedAnswers[question]) {
-      const userMessage = { id: Date.now().toString(), role: 'user', content: question }
-      const botMessage = { id: (Date.now() + 1).toString(), role: 'assistant', content: predefinedAnswers[question] }
+      const userMessage: Message = { 
+        id: Date.now().toString(), 
+        role: 'user',  // Correct type
+        content: question 
+      }
+
+      const botMessage: Message = { 
+        id: (Date.now() + 1).toString(), 
+        role: 'assistant',  // Correct type
+        content: predefinedAnswers[question] 
+      }
+
+      // You may need to update the state properly for this to reflect
+      // in your component (assuming useChat handles state).
       messages.push(userMessage, botMessage)
     } else {
       setInput(question)
@@ -49,4 +61,3 @@ export default function Chatbot() {
     </div>
   )
 }
-
